@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { Search, MapPin, Utensils, Clock, Users, Bell, Home, Compass, UserSearch } from 'lucide-react';
 import { RestaurantCard } from './RestaurantCard';
 import { Map } from './Map';
@@ -14,16 +14,32 @@ import { restaurants } from '../data/restaurants';
 import { dummyReviews, dummyVisitHistory } from '../data/dummyData';
 import { useRestaurantFilters } from '../hooks/useRestaurantFilters';
 
+interface TrailDetails {
+  title: string;
+  description: string;
+  photos: string[];
+}
+
+interface CustomTrail {
+  coordinates: [number, number];
+  details: TrailDetails;
+}
+
 export const MainApp: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedRestaurant, setSelectedRestaurant] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<'home' | 'explore' | 'history' | 'social' | 'search'>('home');
   const { filters, setFilters, filteredRestaurants } = useRestaurantFilters(restaurants);
   const [visitHistory, setVisitHistory] = useState(dummyVisitHistory);
+  const [customTrails, setCustomTrails] = useState<CustomTrail[]>([]);
 
   const handleRestaurantClick = (id: string) => {
     setSelectedRestaurant(id);
   };
+
+  const handleAddTrail = useCallback((coordinates: [number, number], details: TrailDetails) => {
+    setCustomTrails(prev => [...prev, { coordinates, details }]);
+  }, []);
 
   const selectedRestaurantData = selectedRestaurant 
     ? restaurants.find(r => r.id === selectedRestaurant)
@@ -116,7 +132,9 @@ export const MainApp: React.FC = () => {
                   </h2>
                   <Map 
                     restaurants={filteredRestaurants} 
-                    onRestaurantClick={handleRestaurantClick}
+                    onRestaurantClick={(restaurant) => handleRestaurantClick(restaurant.id)}
+                    onAddTrail={handleAddTrail}
+                    customTrails={customTrails}
                   />
                 </div>
               </div>

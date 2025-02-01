@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { MapContainer, TileLayer, Marker, Popup, useMapEvents } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import { Restaurant } from '../types/Restaurant';
@@ -35,12 +35,14 @@ const MapEvents: React.FC<{ onAddTrail: (coordinates: [number, number], details:
     photos: []
   });
 
-  const map = useMapEvents({
-    contextmenu: (e) => {
-      const { lat, lng } = e.latlng;
-      setPopupPosition([lat, lng]);
-      setShowPopup(true);
-    },
+  const handleMapClick = useCallback((e: L.LeafletMouseEvent) => {
+    const { lat, lng } = e.latlng;
+    setPopupPosition([lat, lng]);
+    setShowPopup(true);
+  }, []);
+
+  useMapEvents({
+    contextmenu: handleMapClick,
     click: () => {
       if (!showPopup) return;
       setShowPopup(false);

@@ -23,21 +23,17 @@ const AppContent: React.FC = () => {
 };
 
 const AdminRoute: React.FC = () => {
-  const { login, isAuthenticated, user } = useAuth();
+  const { isAuthenticated, user } = useAuth();
   
-  if (isAuthenticated && user?.role === 'admin') {
-    return <AdminDashboard onLogout={() => {}} />;
+  if (!isAuthenticated) {
+    return <Navigate to="/" />;
   }
 
-  const handleAdminLogin = async (email: string, password: string) => {
-    if (email === 'admin@example.com' && password === 'admin123') {
-      await login(email, password, 'admin');
-    } else {
-      throw new Error('Invalid credentials');
-    }
-  };
+  if (user?.role !== 'admin') {
+    return <Navigate to="/" />;
+  }
 
-  return <AdminLogin onLogin={handleAdminLogin} />;
+  return <AdminDashboard onLogout={() => {}} />;
 };
 
 function App() {
@@ -46,6 +42,7 @@ function App() {
       <AuthProvider>
         <Routes>
           <Route path="/admin/*" element={<AdminRoute />} />
+          <Route path="/admin/login" element={<AdminLogin onLogin={() => {}} />} />
           <Route path="/*" element={<AppContent />} />
         </Routes>
       </AuthProvider>
