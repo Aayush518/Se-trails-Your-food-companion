@@ -7,4 +7,10 @@ export default defineConfig({
   optimizeDeps: {
     exclude: ['lucide-react'],
   },
+  // Add base URL configuration
+  base: '/',
+  // Add server configuration for SPA fallback
+  server: {
+    historyApiFallback: true,
+  },
 });
