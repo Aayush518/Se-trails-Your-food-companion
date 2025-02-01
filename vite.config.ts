@@ -11,6 +11,15 @@ export default defineConfig({
   base: '/',
   // Add server configuration for SPA fallback
   server: {
-    historyApiFallback: true,
+    middleware: [
+      {
+        name: 'spa-fallback',
+        enforce: 'pre',
+        apply: 'serve',
+        handle: (req, res, next) => {
+          next();
+        },
+      },
+    ],
   },
 });
