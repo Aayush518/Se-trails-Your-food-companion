@@ -26,7 +26,7 @@ const AdminRoute: React.FC = () => {
   const { isAuthenticated, user } = useAuth();
   
   if (!isAuthenticated) {
-    return <Navigate to="/" />;
+    return <Navigate to="/admin/login" />;
   }
 
   if (user?.role !== 'admin') {
@@ -41,8 +41,9 @@ function App() {
     <Router>
       <AuthProvider>
         <Routes>
-          <Route path="/admin/*" element={<AdminRoute />} />
           <Route path="/admin/login" element={<AdminLogin onLogin={() => {}} />} />
+          <Route path="/admin/dashboard" element={<AdminRoute />} />
+          <Route path="/admin" element={<Navigate to="/admin/dashboard" />} />
           <Route path="/*" element={<AppContent />} />
         </Routes>
       </AuthProvider>

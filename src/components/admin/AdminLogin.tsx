@@ -7,17 +7,22 @@ interface Props {
   onLogin: (email: string, password: string) => void;
 }
 
-export const AdminLogin: React.FC<Props> = ({ onLogin }) => {
+export const AdminLogin: React.FC<Props> = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const navigate = useNavigate();
+  const { login } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await onLogin(email, password);
-      navigate('/admin/dashboard');
+      if (email === 'admin@example.com' && password === 'admin123') {
+        await login(email, password, 'admin');
+        navigate('/admin/dashboard');
+      } else {
+        throw new Error('Invalid credentials');
+      }
     } catch (err) {
       setError('Invalid credentials. Use admin@example.com / admin123');
     }
